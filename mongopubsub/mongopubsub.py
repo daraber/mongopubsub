@@ -2,12 +2,18 @@ from typing import Callable
 
 from pymongo import MongoClient
 
+from mongopubsub.config import MongoConfig
 from mongopubsub.message import Message
 
 
 class MongoPubSub:
-    def __init__(self, mongo_uri, database="mongopubsub", collection="topics"):
-        self._db = MongoClient(mongo_uri)[database][collection]
+    def __init__(self, mongo_uri, config: MongoConfig):
+        client = MongoClient(mongo_uri)[config.database]
+
+        if config.collection not in client.list_collection_names():
+            client.create_collection(config.collection, capped=config.capped, size=config.size, max=config.max)
+
+        self._db = client[config.collection]
 
     def subscribe(self, topic, callback: Callable[[Message], None]):
         """
