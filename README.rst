@@ -1,3 +1,3 @@
 MongoPubSub
 =====
-Pub/sub messaging using MongoDB
+PoC Pub/sub messaging using MongoDB
